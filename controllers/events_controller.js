@@ -1,7 +1,7 @@
 // DEPENDENCIES
+const { Op } = require('sequelize')
 const events = require('express').Router()
 const db = require('../models')
-//const band = require('../models/event')
 const { Event } = db 
 
 // FIND ALL EVENTS (INDEX ROUTE)
@@ -10,7 +10,7 @@ events.get('/', async (req, res) => {
         const foundEvents = await Event.findAll({
             order: [['event_id', 'ASC']],
             where: {
-                name: {[OP.like]: `%${req.query.name ? req.query.name : ''}%`}
+                name: {[Op.like]: `%${req.query.name ? req.query.name : ''}%`}
             }
         })
         res.status(200).json(foundEvents)
