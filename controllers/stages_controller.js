@@ -21,10 +21,21 @@ stages.get('/', async (req, res) => {
 })
 
 // FIND ONE STAGE (SHOW ROUTE)
-stages.get('/:id', async (req, res) => {
+stages.get('/:name', async (req, res) => {
     try {
         const foundStage = await Stage.findOne({
-            where: { stage_id: req.params.id }
+            where: { name: req.params.name },
+            include: [
+                {
+                    model: Stage,
+                    as: "stages",
+                    include: { 
+                        model: Event, 
+                        as: "event",
+                        where: { name: {[Op.like]: `${req.query.event ? req.query.event : ''}%`}}
+                }   
+                }
+            ]
         })
         res.status(200).json(foundStage)
     } 

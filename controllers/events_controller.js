@@ -21,10 +21,39 @@ events.get('/', async (req, res) => {
 })
 
 // FIND ONE EVENT (SHOW ROUTE)
-events.get('/:id', async (req, res) => {
+events.get('/:name', async (req, res) => {
     try {
         const foundEvent = await Event.findOne({
-            where: { event_id: req.params.id }
+            where: { name: req.params.name },
+            include: [
+                {
+                    model: Stages,
+                    as: "stages",
+                    include: { 
+                        model: Event, 
+                        as: "event",
+                        where: { name: {[Op.like]: `${req.query.event ? req.query.event : ''}%`}}
+                }   
+                },
+                {
+                    model: MeetGreet,
+                    as: "meet_greets",
+                    include: { 
+                        model: Event, 
+                        as: "event",
+                        where: { name: {[Op.like]: `${req.query.event ? req.query.event : ''}%`}}
+                }   
+                },
+                {
+                    model: SetTime,
+                    as: "set_times",
+                    include: { 
+                        model: Event, 
+                        as: "event",
+                        where: { name: {[Op.like]: `${req.query.event ? req.query.event : ''}%`}}
+                }   
+                }
+            ]
         })
         res.status(200).json(foundEvent)
     } 
